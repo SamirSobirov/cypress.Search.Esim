@@ -23,11 +23,9 @@ jobs:
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v6
         with:
-          # Укажите точный путь к вашему файлу теста eSIM
           spec: cypress/e2e/esim.cy.js
           browser: chrome
         env:
-          # Добавляем префикс CYPRESS_, чтобы Cypress увидел эти переменные
           CYPRESS_LOGIN_EMAIL: ${{ secrets.LOGIN_EMAIL }}
           CYPRESS_LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
         continue-on-error: true
