@@ -49,7 +49,7 @@ jobs:
             ${{ (github.event.inputs.user_chat_id != '') && 
             github.event.inputs.user_chat_id || 
             secrets.TELEGRAM_CHAT_ID }}
-          token: ${{ secrets.TELEGRAM_TOKEN }} 
+          token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
             ${{ github.event.inputs.user_chat_id != '' && '👤 **Manual Testing**' || '📢 **Hourly Testing**' }}
