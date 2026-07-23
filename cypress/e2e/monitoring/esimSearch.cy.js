@@ -8,7 +8,10 @@ describe('Esim search flow', { pageLoadTimeout: 120000 }, () => {
   it('Авторизация и поиск E-SIM по стране Турция', () => {
     cy.viewport(1280, 800);
     cy.intercept('POST', '**/login**').as('apiAuth');
-    cy.intercept('POST', '**/api/**').as('apiRequest');
+    cy.intercept('POST', '**/api/esim/search**').as('apiSearch');
+
+    cy.writeFile('api_status.txt', 'UNKNOWN');
+    cy.writeFile('offers_count.txt', 'N/A');
 
     cy.clearCookies();
     cy.clearLocalStorage();
@@ -62,18 +65,25 @@ describe('Esim search flow', { pageLoadTimeout: 120000 }, () => {
 
     cy.log('Нажимаем кнопку поиска');
     cy.wait(1000);
-    cy.get('button.esim-search__submit, .app-button.esim-search__submit, button[class*="esim-search__submit"], button[aria-label*="Поиск"], button[aria-label*="search"], button[type="submit"]', { timeout: 20000 })
+    cy.get('button[data-testid="search-button"], button[aria-label*="Поиск"], button[aria-label*="search"], button[class*="search"], button[class*="submit"]', { timeout: 20000 })
       .filter(':visible')
       .first()
       .should('be.visible')
       .click({ force: true });
 
     cy.log('Ожидаем завершения запроса поиска');
-    cy.wait('@apiRequest', { timeout: 45000 });
-
-    cy.log('Проверяем, что результаты поиска отображаются');
-    cy.get('body', { timeout: 30000 }).should(($body) => {
-      expect($body.text()).to.match(/Турция|E-SIM|сим-карта|оператор|стоимость/i);
+    cy.wait('@apiSearch', { timeout: 45000 }).then((interception) => {
+      const status = interception.response?.statusCode || 0;
+      cy.writeFile('api_status.txt', `${status}`);
     });
+
+    cy.log('Ждём результаты E-SIM и считаем офферы');
+    cy.get('article.offer-card, .offer-card', { timeout: 30000 })
+      .should('have.length.greaterThan', 0)
+      .then(($cards) => {
+        const count = $cards.length;
+        cy.log(`Найдено офферов: ${count}`);
+        cy.writeFile('offers_count.txt', `${count}`);
+      });
   });
 });
