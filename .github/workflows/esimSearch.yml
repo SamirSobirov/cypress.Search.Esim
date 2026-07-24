@@ -12,12 +12,14 @@ on:
 
 jobs:
   cypress-run:
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Cypress run
+        timeout-minutes: 15
         uses: cypress-io/github-action@v6
         with:
           spec: cypress/e2e/monitoring/esimSearch.cy.js

@@ -57,6 +57,7 @@ describe('Esim search flow', { pageLoadTimeout: 120000 }, () => {
       .type('Турция', { delay: 50 });
 
     cy.log('Выбираем первую страну из автодополнения');
+    cy.wait(1500);
     cy.get('ul[role="listbox"] li, ul.p-autocomplete-items li, li.p-autocomplete-option', { timeout: 20000 })
       .contains(/Турция/i)
       .first()
@@ -64,7 +65,7 @@ describe('Esim search flow', { pageLoadTimeout: 120000 }, () => {
       .click({ force: true });
 
     cy.log('Нажимаем кнопку поиска');
-    cy.wait(1000);
+    cy.wait(1500);
     cy.get('button[data-testid="search-button"], button[aria-label*="Поиск"], button[aria-label*="search"], button[class*="search"], button[class*="submit"]', { timeout: 20000 })
       .filter(':visible')
       .first()
